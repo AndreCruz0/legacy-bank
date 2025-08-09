@@ -4,29 +4,50 @@ import { handleError } from '../shared/error';
 
 
 export const productsController = {
-  list : async (req:Request,res:Response) => {
-    // query http://localhost:5000?integrate:false
-    
-      
+  listIntegrateFalse : async (req:Request,res:Response) => {
 
   try {
     const { integrate } = transactionQuerySchema.parse(req.query)
 
-    const  data = await transactionCollection.find({integrate : integrate})
+    const  data = await transactionCollection.find({integrate : integrate}).lean()
     
-    res.status(200).json({
-      data
-    })
+    res.status(200).json(
+      data)
   } catch (e) {
       handleError(res,e)
   }        
 
-    
-
-
-    const data = await transactionCollection.find()
-    return res.json(data)
   },
+
+  list : async (req : Request , res : Response) => {
+try {
+     const data = await transactionCollection.find()
+    return res.json(data)
+} catch (e) {
+    handleError(res , e)
+}
+   
+
+  },
+
+  updateIntegrateStatus  : async (req: Request , res : Response) => {
+
+   try {
+    
+     const result = await transactionCollection.updateMany({integrate : false} , {$set : {integrate:true}})
+
+    res.status(200).json({
+      message: 'Atualização Concluida',
+      matchedCount: result.matchedCount,   
+      modifiedCount: result.modifiedCount,
+    })
+
+   } catch (e) {
+    handleError(res, e)
+   }
+
+  },
+
 
   getById: async (req:Request,res:Response) => {
     try {

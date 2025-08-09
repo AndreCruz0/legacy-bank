@@ -3,7 +3,10 @@ import {productsController} from '../controllers/products.controller'
 
 export const productsRouter = Router()
 
-productsRouter.get('/products', productsController.list )
+productsRouter.get('/products', productsController.list)
+productsRouter.get('/products/integrate', productsController.listIntegrateFalse)
 productsRouter.get('/products/:id', productsController.getById )
 productsRouter.post('/transactions', productsController.create )
+productsRouter.put('/transactions/integrate', productsController.updateIntegrateStatus )
+
 
