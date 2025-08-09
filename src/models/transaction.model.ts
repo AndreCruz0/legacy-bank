@@ -11,13 +11,15 @@ export const transactionCollection = model(
   	required: true
 },
     qty: { type: Number, required: true },
-    integrado: { type: Boolean, default: false },
+    integrate: { type: Boolean, default: false },
     product_id: { type: Number, required: true },  
 		},
 		{ timestamps: true },
 	),
 );
-
+export const transactionQuerySchema = z.object({
+	 integrate: z.string().transform(val => val === "true")
+})
 export const transactionSchema = z.object({
 	_id: z.string().optional(),
 	product_id : z.number(),

@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { transactionCollection, transactionParamsSchema, transactionSchema } from '../models/transaction.model';
+import { transactionCollection, transactionParamsSchema, transactionQuerySchema, transactionSchema } from '../models/transaction.model';
 import { handleError } from '../shared/error';
 
 
@@ -7,15 +7,16 @@ export const productsController = {
   list : async (req:Request,res:Response) => {
     // query http://localhost:5000?integrate:false
     
-    const {integrate} = req.query
-
-   
+      
 
   try {
-    
-    // const  data = transactionCollection.find({integrate : false}).toArray()
-    
+    const { integrate } = transactionQuerySchema.parse(req.query)
 
+    const  data = await transactionCollection.find({integrate : integrate})
+    
+    res.status(200).json({
+      data
+    })
   } catch (e) {
       handleError(res,e)
   }        
