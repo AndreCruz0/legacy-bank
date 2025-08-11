@@ -53,9 +53,9 @@ try {
   getById: async (req:Request,res:Response) => {
     try {
       const {id} = req.params
-      const product = await transactionCollection.findById(id)
+      const product = await transactionCollection.find({product_id : id})
 
-      res.json(
+      res.status(200).json(
         product
       )
 

@@ -11,7 +11,7 @@ app.use(cors({
 }));
 
 
-app.use(transactionsRouter)
+app.use("/transactions" ,transactionsRouter)
 
 app.listen(5000, ()=> {
   console.log('Servidor iniciado na porta http://localhost:5000')
