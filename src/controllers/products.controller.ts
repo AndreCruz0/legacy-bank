@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
-import { transactionCollection, transactionParamsSchema, transactionQuerySchema, transactionSchema } from '../models/transaction.model';
+import {  transactionParamsSchema, transactionQuerySchema, transactionSchema } from '../schemas/transactions.schema';
+import { transactionCollection } from '../models/transaction.model';
 import { handleError } from '../shared/error';
 
 

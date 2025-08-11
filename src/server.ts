@@ -1,6 +1,5 @@
 import express from "express";
-import { productsRouter } from "./routes/products.routes";
-import { connect } from "./db/connectdb";
+import { transactionsRouter } from "./routes/transactions.routes";
 import { connectionMiddleware } from "./middleware/connectionMiddleware";
 import cors from 'cors';
 const app = express()
@@ -12,7 +11,7 @@ app.use(cors({
 }));
 
 
-app.use(productsRouter)
+app.use(transactionsRouter)
 
 app.listen(5000, ()=> {
   console.log('Servidor iniciado na porta http://localhost:5000')
