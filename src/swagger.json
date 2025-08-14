@@ -1,0 +1,364 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API de Transações",
+    "version": "1.0.0",
+    "description": "API para gerenciamento de transações de produtos"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor local"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Transações",
+      "description": "Operações relacionadas a transações"
+    }
+  ],
+  "paths": {
+    "/transactions/list": {
+      "get": {
+        "tags": ["Transações"],
+        "summary": "Listar todas as transações",
+        "description": "Retorna uma lista com todas as transações cadastradas no sistema",
+        "responses": {
+          "200": {
+            "description": "Lista de transações retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Transaction" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/create": {
+      "post": {
+        "tags": ["Transações"],
+        "summary": "Criar uma nova transação",
+        "description": "Cria uma nova transação no sistema com os dados fornecidos",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TransactionInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transação registrada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Transação registrada com sucesso"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro de validação dos dados enviados",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ValidationError" }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/integrate": {
+      "put": {
+        "tags": ["Transações"],
+        "summary": "Atualizar status de integração de transações",
+        "description": "Atualiza o status de integração de todas as transações que possuem integrate=false para integrate=true",
+        "responses": {
+          "200": {
+            "description": "Atualização concluída com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Atualização Concluida"
+                    },
+                    "matchedCount": {
+                      "type": "integer",
+                      "description": "Número de documentos que atenderam ao critério de busca"
+                    },
+                    "modifiedCount": {
+                      "type": "integer",
+                      "description": "Número de documentos que foram efetivamente modificados"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Transações"],
+        "summary": "Listar transações não integradas",
+        "description": "Lista todas as transações que possuem integrate=false. Requer o parâmetro query 'integrate=false'",
+        "parameters": [
+          {
+            "name": "integrate",
+            "in": "query",
+            "schema": { 
+              "type": "boolean",
+              "enum": [false]
+            },
+            "required": true,
+            "description": "Deve ser obrigatoriamente 'false' para listar apenas transações não integradas",
+            "example": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de transações não integradas retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Transaction" }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro de validação do parâmetro query",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ValidationError" }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{id}": {
+      "get": {
+        "tags": ["Transações"],
+        "summary": "Obter transações por ID do produto",
+        "description": "Retorna todas as transações associadas a um produto específico",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "ID do produto para filtrar as transações",
+            "example": "prod_123456"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de transações do produto retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Transaction" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Transaction": {
+        "type": "object",
+        "description": "Representa uma transação no sistema",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "ID único da transação gerado pelo MongoDB",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "product_id": {
+            "type": "string",
+            "description": "ID do produto relacionado à transação",
+            "example": "prod_123456"
+          },
+          "integrate": {
+            "type": "boolean",
+            "description": "Status de integração da transação",
+            "default": false,
+            "example": false
+          },
+          "amount": {
+            "type": "number",
+            "description": "Quantidade do produto na transação",
+            "minimum": 1,
+            "example": 5
+          },
+          "price": {
+            "type": "number",
+            "description": "Preço unitário do produto",
+            "minimum": 0.01,
+            "example": 29.99
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data e hora de criação da transação",
+            "example": "2025-08-14T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data e hora da última atualização da transação",
+            "example": "2025-08-14T10:30:00.000Z"
+          }
+        }
+      },
+      "TransactionInput": {
+        "type": "object",
+        "description": "Dados necessários para criar uma nova transação",
+        "required": ["product_id", "amount", "price"],
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "description": "ID do produto relacionado à transação",
+            "example": "prod_123456"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Quantidade do produto (deve ser maior que 0)",
+            "example": 5
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0.01,
+            "description": "Preço unitário do produto (deve ser maior que 0)",
+            "example": 29.99
+          },
+          "integrate": {
+            "type": "boolean",
+            "default": false,
+            "description": "Status inicial de integração (opcional, padrão: false)",
+            "example": false
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "description": "Estrutura de erro padrão da API",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Descrição do erro ocorrido",
+            "example": "Erro interno do servidor"
+          }
+        },
+        "required": ["message"]
+      },
+      "ValidationError": {
+        "type": "object",
+        "description": "Erro de validação com detalhes dos campos inválidos",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Mensagem geral do erro de validação",
+            "example": "Erro de validação"
+          },
+          "issues": {
+            "type": "object",
+            "description": "Detalhes dos erros de validação organizados por tipo",
+            "properties": {
+              "fieldErrors": {
+                "type": "object",
+                "description": "Erros específicos de campos",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "description": "Caminho do campo com erro",
+                        "example": "amount"
+                      },
+                      "message": {
+                        "type": "string",
+                        "description": "Mensagem de erro específica",
+                        "example": "Number must be greater than or equal to 1"
+                      }
+                    }
+                  }
+                }
+              },
+              "formErrors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Erros gerais do formulário"
+              }
+            }
+          }
+        },
+        "required": ["message", "issues"]
+      }
+    }
+  }
+}
