@@ -3,7 +3,7 @@ import cors from "cors";
 import { transactionsRouter } from "./routes/transactions.routes";
 import { connectionMiddleware } from "./middleware/connectionMiddleware";
 
-// Swagger
+
 import swaggerUi from "swagger-ui-express";
 import * as swaggerDocument from "./swagger.json"; 
 import Logger from "./shared/logger";

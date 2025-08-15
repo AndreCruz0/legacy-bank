@@ -4,19 +4,23 @@ import { transactionCollection } from '../models/transaction.model';
 import { handleError } from '../shared/error';
 
 
-export const productsController = {
+export const TransactionController = {
   listIntegrateFalse : async (req:Request,res:Response) => {
 
-  try {
-    const { integrate } = transactionQuerySchema.parse(req.query)
+try {
+    const { integrate } = transactionQuerySchema.parse(req.query);
 
-    const  data = await transactionCollection.find({integrate : integrate}).lean()
-    
-    res.status(200).json(
-      data)
-  } catch (e) {
-      handleError(res,e)
-  }        
+    if (Math.random() < 0.5) { 
+        throw new Error("Falha temporária no banco legado!");
+    }
+
+    const data = await transactionCollection.find({ integrate }).lean();
+
+    res.status(200).json(data);
+} catch (e) {
+    handleError(res, e);
+}
+  
 
   },
 
