@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000",
+      "url": "http://localhost:5000",
       "description": "Servidor local"
     }
   ],
@@ -195,7 +195,7 @@
             "required": true,
             "schema": { "type": "string" },
             "description": "ID do produto para filtrar as transações",
-            "example": "prod_123456"
+            "example": 1
           }
         ],
         "responses": {
@@ -273,14 +273,14 @@
       "TransactionInput": {
         "type": "object",
         "description": "Dados necessários para criar uma nova transação",
-        "required": ["product_id", "amount", "price"],
+        "required": ["product_id", "qty", "price" , "type"],
         "properties": {
           "product_id": {
-            "type": "string",
+            "type": "number",
             "description": "ID do produto relacionado à transação",
-            "example": "prod_123456"
+            "example": 1
           },
-          "amount": {
+          "qty": {
             "type": "number",
             "minimum": 1,
             "description": "Quantidade do produto (deve ser maior que 0)",
@@ -291,6 +291,13 @@
             "minimum": 0.01,
             "description": "Preço unitário do produto (deve ser maior que 0)",
             "example": 29.99
+          },
+          "type": {
+            "type": "string",
+            "enum": ["entrada", "saida"],
+            "required": true,
+            "description": "Deve Ser Entada ou Saída",
+            "example": "entrada"
           },
           "integrate": {
             "type": "boolean",
